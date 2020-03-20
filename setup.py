@@ -14,10 +14,7 @@ setup(
 	long_description_content_type = "text/markdown",
 	long_description=open('README.md').read(),
     url='https://github.com/mickael2054/IReadiTunes.git',
-	install_requires=[
-        'xml.etree.ElementTree',
-		'urllib.parse',
-		  ],
+	install_requires=[],
     classifiers=[
         "Programming Language :: Python",
         "Natural Language :: English",
