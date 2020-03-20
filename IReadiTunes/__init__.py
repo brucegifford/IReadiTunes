@@ -9,5 +9,5 @@ MIT License
 
 name          = "IReadiTunes"
 __author__    = "Mickael Gerber <mickaelgerberdev@gmail.com>"
-__version__   =  "1.0.0"
+__version__   =  "1.0.2"
 __license__   = "MIT"

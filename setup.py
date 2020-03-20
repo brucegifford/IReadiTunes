@@ -13,7 +13,7 @@ setup(
 	description="Tool to get any information about iTunes tracks and playlists quickly and easily",
 	long_description_content_type = "text/markdown",
 	long_description=open('README.md').read(),
-    url='https://github.com/mickael2054/IReadiTunes.git',
+    url='https://github.com/mickael2054/IReadiTunes/releases/tag/1.0.1',
 	install_requires=[],
     classifiers=[
         "Programming Language :: Python",
