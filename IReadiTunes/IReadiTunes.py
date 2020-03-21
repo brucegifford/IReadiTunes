@@ -175,4 +175,4 @@ def get_rating(input_rating):
 
 def get_track_path(input_url):
     """Returns the path of a track"""
-    return unquote(urlparse(input_url).path)    
+    return unquote(urlparse(input_url).path[1:])
