@@ -16,5 +16,5 @@ from IReadiTunes.IReadiTunes import get_track_path
 
 name          = "IReadiTunes"
 __author__    = "Mickael Gerber <mickaelgerberdev@gmail.com>"
-__version__   =  "1.0.3"
+__version__   =  "1.0.4"
 __license__   = "MIT"
