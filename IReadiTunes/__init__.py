@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Mickael Gerber <mickaelgerberdev@gmail.com>
+Mickael <mickael2054dev@gmail.com>
 
 MIT License
     https://github.com/mickael2054/IReadiTunes.git
@@ -15,6 +15,6 @@ from IReadiTunes.IReadiTunes import get_rating
 from IReadiTunes.IReadiTunes import get_track_path
 
 name          = "IReadiTunes"
-__author__    = "Mickael Gerber <mickaelgerberdev@gmail.com>"
-__version__   =  "1.0.4"
+__author__    = "Mickael <mickael2054dev@gmail.com>"
+__version__   =  "1.0.5"
 __license__   = "MIT"

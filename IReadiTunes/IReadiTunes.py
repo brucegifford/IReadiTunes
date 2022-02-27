@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Tool to get any information about iTunes tracks and playlists quickly and easily 
-Mickael Gerber <mickaelgerberdev@gmail.com>
+Tool to get any information about iTunes tracks and playlists quickly and easily.
+Mickael <mickael2054dev@gmail.com>
 MIT License
 """
 
@@ -35,12 +35,12 @@ class Library(object):
         main_dict = self.lib.findall('dict')
         
         sub_array=main_dict[0].findall('array')
-        sub_array_childrens = sub_array[0].getchildren()
+        sub_array_childrens = list(sub_array[0])
           
         # For each playlist
         playlist_name_list = []
         for array in sub_array_childrens:
-            playlist = array.getchildren()
+            playlist = list(array)
             
             # Save name of playlists
             for i in range(len(playlist)):
@@ -51,10 +51,10 @@ class Library(object):
                     
                 # Get tracks
                 if playlist[i].tag == "array":
-                    sub_array = playlist[i].getchildren()
+                    sub_array = list(playlist[i])
                     
                     for k in range(len(sub_array)):
-                        track_tags = sub_array[k].getchildren()
+                        track_tags = list(sub_array[k])
                     
                         self.complete_playlist.append([cur_playlist_name, 
                                                        track_tags[1].text])
@@ -107,25 +107,25 @@ class Library(object):
             self.location = location
         
     
-        # Create tracks list with attributs
+        # Create tracks list with attributes
         main_dict = self.lib.findall('dict')    
         
         sub_array=main_dict[0].findall('dict')
-        sub_array_childrens = sub_array[0].getchildren()
+        sub_array_childrens = list(sub_array[0])
               
         for track in sub_array_childrens:
             att_list = [None] * 22
             
             if track.tag == "dict":
-                track_attributs = list(track)
-                for att_ind in range(0, len(track_attributs), 2):
+                track_attributes = list(track)
+                for att_ind in range(0, len(track_attributes), 2):
                     try:
                         tag_index = attribut_name_list.index(
-                                track_attributs[att_ind].text)
+                                track_attributes[att_ind].text)
                     except ValueError:
                         pass
                     else:
-                        att_list[tag_index] = track_attributs[att_ind+1].text                    
+                        att_list[tag_index] = track_attributes[att_ind+1].text
 
                 self.track_attr_list.append(Track(att_list[0], att_list[1], 
                                                   att_list[2], att_list[3],
@@ -141,8 +141,8 @@ class Library(object):
     
     
     def get_playlist_contents(self, playlist_name):
-        """Returns tracks (with attributs) of given playlist"""
-        playlist_with_attributs = []
+        """Returns tracks (with attributes) of given playlist"""
+        playlist_with_attributes = []
         
         for track in self.complete_playlist:
             if track[0] == playlist_name:
@@ -150,9 +150,9 @@ class Library(object):
                         
                 for elem in self.track_attr_list:                    
                     if elem.track_id == temp_track_ID:
-                        playlist_with_attributs.append(elem)
+                        playlist_with_attributes.append(elem)
                         break
-        return playlist_with_attributs
+        return playlist_with_attributes
     
     
 def get_size(input_size):
