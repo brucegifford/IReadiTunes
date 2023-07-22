@@ -28,44 +28,41 @@ class Library(object):
         tree = ET.parse(path_to_XML_file)
         self.lib = tree.getroot()
         self.read_tracks()
-    
-            
+
     def get_playlist_list(self):
         """Creates playlists list"""
         main_dict = self.lib.findall('dict')
-        
-        sub_array=main_dict[0].findall('array')
+
+        sub_array = main_dict[0].findall('array')
         sub_array_childrens = list(sub_array[0])
-          
+
         # For each playlist
         playlist_name_list = []
         for array in sub_array_childrens:
             playlist = list(array)
-            
+
             # Save name of playlists
             for i in range(len(playlist)):
                 if playlist[i].text == "Name":
-                    playlist_name_list.append(playlist[i+1].text)
-                    cur_playlist_name = playlist[i+1].text
-                    
-                    
+                    playlist_name_list.append(playlist[i + 1].text)
+                    cur_playlist_name = playlist[i + 1].text
+
                 # Get tracks
                 if playlist[i].tag == "array":
                     sub_array = list(playlist[i])
-                    
+
                     for k in range(len(sub_array)):
                         track_tags = list(sub_array[k])
-                    
-                        self.complete_playlist.append([cur_playlist_name, 
+
+                        self.complete_playlist.append([cur_playlist_name,
                                                        track_tags[1].text])
-                        
+
         return playlist_name_list
-    
-    
+
     def get_track_list(self):
         """Returns playlists list"""
         return self.track_attr_list
-   
+
     def read_tracks(self):
         """Generate tracks list"""
         attribut_name_list = ["Track ID", "Size", "Total Time", "Date Modified", 
@@ -157,21 +154,21 @@ class Library(object):
     
 def get_size(input_size):
     """Returns the size of a track in a human-readable way"""
-    return float("{0:.2f}".format(int(input_size)/1E6))
-    
-    
+    return float("{0:.2f}".format(int(input_size) / 1E6))
+
+
 def get_total_time(input_time):
     """Returns the duration of a track in a human-readable way"""
-    return int(int(input_time)/1000)
+    return int(int(input_time) / 1000)
 
 
 def get_rating(input_rating):
     """ Returns stars iTunes rating"""
     if input_rating:
-        return (int(input_rating)/100)*5
+        return (int(input_rating) / 100) * 5
     else:
         return input_rating
-    
+
 
 def get_track_path(input_url):
     """Returns the path of a track"""
