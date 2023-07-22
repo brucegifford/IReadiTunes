@@ -153,11 +153,15 @@ class Library(object):
     
     
 def get_size(input_size):
+    if input_size is None:
+        return "unknown"
     """Returns the size of a track in a human-readable way"""
     return float("{0:.2f}".format(int(input_size) / 1E6))
 
 
 def get_total_time(input_time):
+    if input_time is None:
+        return 0
     """Returns the duration of a track in a human-readable way"""
     return int(int(input_time) / 1000)
 
