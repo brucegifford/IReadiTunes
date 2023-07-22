@@ -21,7 +21,7 @@ class Library(object):
         self.lib = 0
         self.complete_playlist = []
         self.track_attr_list = []
-        
+        self.track_id_map = {}
 
     def parse(self, path_to_XML_file):
         """Reads xml file and generate tracks list"""
@@ -82,22 +82,6 @@ class Library(object):
                               'Explicit', 'Sort Composer']
 
         class Track:
-    
-    def get_playlist_contents(self, playlist_name):
-        """Returns tracks (with attributes) of given playlist"""
-        playlist_with_attributes = []
-        
-        for track in self.complete_playlist:
-            if track[0] == playlist_name:
-                temp_track_ID = track[1]
-                        
-                for elem in self.track_attr_list:                    
-                    if elem.track_id == temp_track_ID:
-                        playlist_with_attributes.append(elem)
-                        break
-        return playlist_with_attributes
-    
-    
             def __init__(self, track_id, size, total_time, date_modified,
                          date_added, bitrate, sample_rate, play_count, play_date,
                          play_date_utc, skip_count, skip_date, rating,
@@ -290,6 +274,25 @@ class Library(object):
 
     if len(missing_attribute_tags) > 0:
         print("missing attribute handling: ", missing_attribute_tags.keys())
+
+
+def get_playlist_contents(self, playlist_name):
+    """Returns tracks (with attributes) of given playlist"""
+    playlist_with_attributes = []
+
+    for track in self.complete_playlist:
+        if track[0] == playlist_name:
+            temp_track_ID = track[1]
+
+            temp_track = self.track_id_map[temp_track_ID]
+            playlist_with_attributes.append(temp_track)
+            """
+            for elem in self.track_attr_list:                    
+                if elem.track_id == temp_track_ID:
+                    playlist_with_attributes.append(elem)
+                    break
+            """
+    return playlist_with_attributes
 
 
 def get_size(input_size):
