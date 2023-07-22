@@ -276,23 +276,23 @@ class Library(object):
             print("missing attribute handling: ", missing_attribute_tags.keys())
 
 
-def get_playlist_contents(self, playlist_name):
-    """Returns tracks (with attributes) of given playlist"""
-    playlist_with_attributes = []
+    def get_playlist_contents(self, playlist_name):
+        """Returns tracks (with attributes) of given playlist"""
+        playlist_with_attributes = []
 
-    for track in self.complete_playlist:
-        if track[0] == playlist_name:
-            temp_track_ID = track[1]
+        for track in self.complete_playlist:
+            if track[0] == playlist_name:
+                temp_track_ID = track[1]
 
-            temp_track = self.track_id_map[temp_track_ID]
-            playlist_with_attributes.append(temp_track)
-            """
-            for elem in self.track_attr_list:                    
-                if elem.track_id == temp_track_ID:
-                    playlist_with_attributes.append(elem)
-                    break
-            """
-    return playlist_with_attributes
+                temp_track = self.track_id_map[temp_track_ID]
+                playlist_with_attributes.append(temp_track)
+                """
+                for elem in self.track_attr_list:                    
+                    if elem.track_id == temp_track_ID:
+                        playlist_with_attributes.append(elem)
+                        break
+                """
+        return playlist_with_attributes
 
 
 def get_size(input_size):
