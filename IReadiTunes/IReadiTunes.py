@@ -240,40 +240,40 @@ class Library(object):
 
                 return track_dict
 
-    attribut_name_list_len = len(attribut_name_list)
+        attribut_name_list_len = len(attribut_name_list)
 
-    missing_attribute_tags = {}
+        missing_attribute_tags = {}
 
-    # Create tracks list with attributes
-    main_dict = self.lib.findall('dict')
+        # Create tracks list with attributes
+        main_dict = self.lib.findall('dict')
 
-    sub_array = main_dict[0].findall('dict')
-    sub_array_childrens = list(sub_array[0])
+        sub_array = main_dict[0].findall('dict')
+        sub_array_childrens = list(sub_array[0])
 
-    for track in sub_array_childrens:
-        att_list = [None] * attribut_name_list_len
+        for track in sub_array_childrens:
+            att_list = [None] * attribut_name_list_len
 
-        if track.tag == "dict":
-            extra_attributes = {}
-            track_attributes = list(track)
-            for att_ind in range(0, len(track_attributes), 2):
-                try:
-                    tag_index = attribut_name_list.index(track_attributes[att_ind].text)
-                except ValueError:
-                    missing_attribute_tags[track_attributes[att_ind].text] = True
-                    extra_attributes[track_attributes[att_ind].text] = track_attributes[att_ind + 1].text
-                    pass
-                else:
-                    att_list[tag_index] = track_attributes[att_ind + 1].text
+            if track.tag == "dict":
+                extra_attributes = {}
+                track_attributes = list(track)
+                for att_ind in range(0, len(track_attributes), 2):
+                    try:
+                        tag_index = attribut_name_list.index(track_attributes[att_ind].text)
+                    except ValueError:
+                        missing_attribute_tags[track_attributes[att_ind].text] = True
+                        extra_attributes[track_attributes[att_ind].text] = track_attributes[att_ind + 1].text
+                        pass
+                    else:
+                        att_list[tag_index] = track_attributes[att_ind + 1].text
 
-            new_track = Track(*att_list)
-            if len(extra_attributes) > 0:
-                new_track.add_extra_attributes(extra_attributes)
-            self.track_attr_list.append(new_track)
-            self.track_id_map[new_track.track_id] = new_track
+                new_track = Track(*att_list)
+                if len(extra_attributes) > 0:
+                    new_track.add_extra_attributes(extra_attributes)
+                self.track_attr_list.append(new_track)
+                self.track_id_map[new_track.track_id] = new_track
 
-    if len(missing_attribute_tags) > 0:
-        print("missing attribute handling: ", missing_attribute_tags.keys())
+        if len(missing_attribute_tags) > 0:
+            print("missing attribute handling: ", missing_attribute_tags.keys())
 
 
 def get_playlist_contents(self, playlist_name):
