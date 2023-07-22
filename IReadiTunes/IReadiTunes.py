@@ -174,6 +174,13 @@ class Library(object):
                 self.explicit = explicit
                 self.sort_composer = sort_composer
 
+            def add_extra_attribute(self, key, value):
+                self.extra_attributes[key] = value
+
+            def add_extra_attributes(self, attributes):
+                for key, value in attributes.items():
+                    self.extra_attributes[key] = value
+
     attribut_name_list_len = len(attribut_name_list)
 
     missing_attribute_tags = {}
