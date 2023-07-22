@@ -181,6 +181,81 @@ class Library(object):
                 for key, value in attributes.items():
                     self.extra_attributes[key] = value
 
+            def get_as_dict(self):
+                track_dict = {}
+
+                def add_non_None_attribute(key, value):
+                    if value is not None:
+                        track_dict[key] = value
+
+                add_non_None_attribute('track_id', self.track_id)
+                add_non_None_attribute('size', self.size)
+                add_non_None_attribute('total_time', self.total_time)
+                add_non_None_attribute('date_modified', self.date_modified)
+                add_non_None_attribute('date_added', self.date_added)
+                add_non_None_attribute('bitrate', self.bitrate)
+                add_non_None_attribute('sample_rate', self.sample_rate)
+                add_non_None_attribute('play_count', self.play_count)
+                add_non_None_attribute('play_date', self.play_date)
+                add_non_None_attribute('play_date_utc', self.play_date_utc)
+                add_non_None_attribute('skip_count', self.skip_count)
+                add_non_None_attribute('skip_date', self.skip_date)
+                add_non_None_attribute('rating', self.rating)
+                add_non_None_attribute('album_rating', self.album_rating)
+                add_non_None_attribute('persistent_id', self.persistent_id)
+                add_non_None_attribute('track_type', self.track_type)
+                add_non_None_attribute('file_folder_count', self.file_folder_count)
+                add_non_None_attribute('library_folder_count', self.library_folder_count)
+                add_non_None_attribute('name', self.name)
+                add_non_None_attribute('artist', self.artist)
+                add_non_None_attribute('kind', self.kind)
+                add_non_None_attribute('location', self.location)
+                add_non_None_attribute('album', self.album)
+
+                add_non_None_attribute('genre', self.genre)
+                add_non_None_attribute('year', self.year)
+                add_non_None_attribute('release_date', self.release_date)
+                add_non_None_attribute('artwork_count', self.artwork_count)
+                add_non_None_attribute('sort_artist', self.sort_artist)
+                add_non_None_attribute('sort_name', self.sort_name)
+                add_non_None_attribute('content_rating', self.content_rating)
+                add_non_None_attribute('purchased', self.purchased)
+                add_non_None_attribute('has_video', self.has_video)
+                add_non_None_attribute('hd', self.hd)
+                add_non_None_attribute('movie', self.movie)
+                add_non_None_attribute('album_artist', self.album_artist)
+                add_non_None_attribute('composer', self.composer)
+                add_non_None_attribute('disc_number', self.disc_number)
+                add_non_None_attribute('disc_count', self.disc_count)
+                add_non_None_attribute('track_number', self.track_number)
+                add_non_None_attribute('track_count', self.track_count)
+                add_non_None_attribute('normalization', self.normalization)
+                add_non_None_attribute('sort_album', self.sort_album)
+                add_non_None_attribute('loved', self.loved)
+                add_non_None_attribute('compilation', self.compilation)
+                add_non_None_attribute('sort_album_artist', self.sort_album_artist)
+                add_non_None_attribute('series', self.series)
+                add_non_None_attribute('episode_order', self.episode_order)
+                add_non_None_attribute('tv_show', self.tv_show)
+                add_non_None_attribute('protected', self.protected)
+                add_non_None_attribute('video_width', self.video_width)
+                add_non_None_attribute('video_height', self.video_height)
+                add_non_None_attribute('season', self.season)
+                add_non_None_attribute('bpm', self.bpm)
+                add_non_None_attribute('podcast', self.podcast)
+                add_non_None_attribute('unplayed', self.unplayed)
+                add_non_None_attribute('comments', self.comments)
+                add_non_None_attribute('part_of_gapless_album', self.part_of_gapless_album)
+                add_non_None_attribute('work', self.work)
+                add_non_None_attribute('clean', self.clean)
+                add_non_None_attribute('explicit', self.explicit)
+                add_non_None_attribute('sort_composer', self.sort_composer)
+
+                for key, value in self.extra_attributes:
+                    track_dict[key] = value
+
+                return track_dict
+
     attribut_name_list_len = len(attribut_name_list)
 
     missing_attribute_tags = {}
