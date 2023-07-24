@@ -31,6 +31,27 @@ class Library(object):
         self.read_tracks()
         self.read_playlists()
 
+    def get_plist_attr_value(self, attr_name, attr):
+        if attr.tag == 'string':
+            return attr.text
+        elif attr.tag == 'true':
+            return True
+        elif attr.tag == 'false':
+            return False
+        elif attr.tag == 'integer':
+            if attr.text is not None:
+                return int(attr.text)
+            else:
+                return None
+        elif attr.tag == 'date':
+            datetime_object = datetime.strptime(attr.text, "%Y-%m-%dT%H:%M:%SZ")
+            return datetime_object
+        else:
+            print("What to do for playlist attribute '%s' of type '%s', value '%s'" % (attr_name,
+            playlist_attributes[att_ind].text, attr.tag,
+            str(attr.text)))
+            return attr.text
+
     def read_playlists(self):
         """Generate tracks list"""
         attribut_name_list = [ "Name", "Description", "Master", "Playlist ID", "Playlist Persistent ID", "Visible",
@@ -130,26 +151,13 @@ class Library(object):
                         #self.complete_playlist.append([cur_playlist_name, track_tags[1].text])
                 else:
                     try:
-                        print("Looking at "+playlist_attributes[att_ind].text)
+                        #print("Looking at "+playlist_attributes[att_ind].text)
                         tag_index = attribut_name_list.index(playlist_attributes[att_ind].text)
                     except ValueError:
                         missing_attribute_tags[playlist_attributes[att_ind].text] = True
-                        extra_attributes[playlist_attributes[att_ind].text] = playlist_attributes[att_ind + 1].text
+                        extra_attributes[playlist_attributes[att_ind].text] = self.get_plist_attr_value(playlist_attributes[att_ind].text, playlist_attributes[att_ind+1])
                         continue
-                    if playlist_attributes[att_ind+1].tag == 'string':
-                        att_list[tag_index] = playlist_attributes[att_ind + 1].text
-                    elif playlist_attributes[att_ind + 1].tag == 'true':
-                        att_list[tag_index] = True
-                    elif playlist_attributes[att_ind + 1].tag == 'false':
-                        att_list[tag_index] = False
-                    elif playlist_attributes[att_ind + 1].tag == 'integer':
-                        if playlist_attributes[att_ind + 1].text is not None:
-                            att_list[tag_index] = int(playlist_attributes[att_ind + 1].text)
-                    elif playlist_attributes[att_ind + 1].tag == 'date':
-                        datetime_object = datetime.strptime(playlist_attributes[att_ind + 1].text, "%Y-%m-%dT%H:%M:%SZ")
-                        att_list[tag_index] = datetime_object
-                    else:
-                        print("What to do for playlist attribute '%s' of type '%s', value '%s'"%(playlist_attributes[att_ind].text, playlist_attributes[att_ind+1].tag,  str(playlist_attributes[att_ind+1].text)))
+                    att_list[tag_index] = self.get_plist_attr_value(playlist_attributes[att_ind].text, playlist_attributes[att_ind+1])
 
             new_playlist = PlayList(*att_list)
             new_playlist.set_track_indexes(self, track_list)
@@ -366,22 +374,9 @@ class Library(object):
                         tag_index = attribut_name_list.index(track_attributes[att_ind].text)
                     except ValueError:
                         missing_attribute_tags[track_attributes[att_ind].text] = True
-                        extra_attributes[track_attributes[att_ind].text] = track_attributes[att_ind + 1].text
+                        extra_attributes[track_attributes[att_ind].text] = self.get_plist_attr_value(track_attributes[att_ind].text, track_attributes[att_ind+1])
                         continue
-                    if track_attributes[att_ind+1].tag == 'string':
-                        att_list[tag_index] = track_attributes[att_ind + 1].text
-                    elif track_attributes[att_ind + 1].tag == 'true':
-                        att_list[tag_index] = True
-                    elif track_attributes[att_ind + 1].tag == 'false':
-                        att_list[tag_index] = False
-                    elif track_attributes[att_ind + 1].tag == 'integer':
-                        if track_attributes[att_ind + 1].text is not None:
-                            att_list[tag_index] = int(track_attributes[att_ind + 1].text)
-                    elif track_attributes[att_ind + 1].tag == 'date':
-                        datetime_object = datetime.strptime(track_attributes[att_ind + 1].text, "%Y-%m-%dT%H:%M:%SZ")
-                        att_list[tag_index] = datetime_object
-                    else:
-                        print("What to do for track attribute '%s' of type '%s', value '%s'"%(track_attributes[att_ind].text, track_attributes[att_ind+1].tag,  str(track_attributes[att_ind+1].text)))
+                    att_list[tag_index] = self.get_plist_attr_value(track_attributes[att_ind].text, track_attributes[att_ind+1])
 
                 new_track = Track(*att_list)
                 if len(extra_attributes) > 0:
