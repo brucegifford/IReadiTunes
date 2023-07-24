@@ -7,6 +7,7 @@ MIT License
 
 import xml.etree.ElementTree as ET
 from urllib.parse import unquote, urlparse
+from datetime import datetime
 
 
 def lib_init():
@@ -19,7 +20,7 @@ class Library(object):
     def __init__(self):
         """Constructor"""
         self.lib = 0
-        self.complete_playlist = []
+        self.playlists = []
         self.track_attr_list = []
         self.track_id_map = {}
 
@@ -28,36 +29,140 @@ class Library(object):
         tree = ET.parse(path_to_XML_file)
         self.lib = tree.getroot()
         self.read_tracks()
+        self.read_playlists()
 
-    def get_playlist_list(self):
+    def read_playlists(self):
+        """Generate tracks list"""
+        attribut_name_list = [ "Name", "Description", "Master", "Playlist ID", "Playlist Persistent ID", "Visible",
+                               "All Items", "Distinguished Kind", "Music", 'Movies', 'TV Shows', 'Podcasts',
+                               'Audiobooks', 'Folder', 'Parent Persistent ID', 'Purchased Music' ]
+
+        class PlayList:
+            def __init__(self, name, description, master, playlist_id, playlist_persistent_id, visible, all_items,
+                         distinguished_kind, music, movies, tv_shows, podcasts, audiobooks, folder,
+                         parent_persistent_id, purchased_music):
+                self.extra_attributes = {}
+                self.tracks = []
+                self.name = name
+                self.description = description
+                self.master = master
+                self.playlist_id = playlist_id
+                self.playlist_persistent_id = playlist_persistent_id
+                self.visible = visible
+                self.all_items = all_items
+                self.distinguished_kind = distinguished_kind
+                self.music = music
+                self.movies = movies
+                self.tv_shows = tv_shows
+                self.podcasts = podcasts
+                self.audiobooks = audiobooks
+                self.folder = folder
+                self.parent_persistent_id = parent_persistent_id
+                self.purchased_music = purchased_music
+
+            def set_track_indexes(self, library, track_list):
+                for track_id in track_list:
+                    self.tracks.append( (track_id, library.track_id_map[track_id] ))
+
+            def add_extra_attribute(self, key, value):
+                self.extra_attributes[key] = value
+
+            def add_extra_attributes(self, attributes):
+                for key, value in attributes.items():
+                    self.extra_attributes[key] = value
+
+            def get_as_dict(self):
+                playlist_dict = {}
+
+                def add_non_None_attribute(key, value):
+                    if value is not None:
+                        playlist_dict[key] = value
+
+                add_non_None_attribute('name', self.name)
+                add_non_None_attribute('description', self.description)
+                add_non_None_attribute('master', self.master)
+                add_non_None_attribute('playlist_id', self.playlist_id)
+                add_non_None_attribute('playlist_persistent_id', self.playlist_persistent_id)
+                add_non_None_attribute('visible', self.visible)
+                add_non_None_attribute('all_items', self.all_items)
+                add_non_None_attribute('distinguished_kind', self.distinguished_kind)
+                add_non_None_attribute('music', self.music)
+                add_non_None_attribute('movies', self.movies)
+                add_non_None_attribute('tv_shows', self.tv_shows)
+                add_non_None_attribute('podcasts', self.podcasts)
+                add_non_None_attribute('audiobooks', self.audiobooks)
+                add_non_None_attribute('folder', self.folder)
+                add_non_None_attribute('parent_persistent_id', self.parent_persistent_id)
+                add_non_None_attribute('purchased_music', self.purchased_music)
+
+                for key, value in self.extra_attributes:
+                    playlist_dict[key] = value
+
+                return playlist_dict
+
+        attribut_name_list_len = len(attribut_name_list)
+
+        missing_attribute_tags = {}
+
         """Creates playlists list"""
         main_dict = self.lib.findall('dict')
 
         sub_array = main_dict[0].findall('array')
         sub_array_childrens = list(sub_array[0])
 
-        # For each playlist
-        playlist_name_list = []
         for array in sub_array_childrens:
-            playlist = list(array)
+            playlist_attributes = list(array)
+            att_list = [None] * attribut_name_list_len
 
-            # Save name of playlists
-            for i in range(len(playlist)):
-                if playlist[i].text == "Name":
-                    playlist_name_list.append(playlist[i + 1].text)
-                    cur_playlist_name = playlist[i + 1].text
+            extra_attributes = {}
+            track_list = []
+            for att_ind in range(0, len(playlist_attributes), 2):
+                if playlist_attributes[att_ind].text == "Playlist Items" and playlist_attributes[att_ind+1].tag == "array":
+                    tracks_sub_array = list(playlist_attributes[att_ind+1])
 
-                # Get tracks
-                if playlist[i].tag == "array":
-                    sub_array = list(playlist[i])
+                    for k in range(len(tracks_sub_array)):
+                        track_tags = list(tracks_sub_array[k])
+                        assert len(track_tags) == 2
+                        assert track_tags[0].tag == 'key' and track_tags[0].text == "Track ID"
+                        assert track_tags[1].tag == 'integer'
+                        track_list.append(int(track_tags[1].text))
 
-                    for k in range(len(sub_array)):
-                        track_tags = list(sub_array[k])
+                        #self.complete_playlist.append([cur_playlist_name, track_tags[1].text])
+                else:
+                    try:
+                        print("Looking at "+playlist_attributes[att_ind].text)
+                        tag_index = attribut_name_list.index(playlist_attributes[att_ind].text)
+                    except ValueError:
+                        missing_attribute_tags[playlist_attributes[att_ind].text] = True
+                        extra_attributes[playlist_attributes[att_ind].text] = playlist_attributes[att_ind + 1].text
+                        continue
+                    if playlist_attributes[att_ind+1].tag == 'string':
+                        att_list[tag_index] = playlist_attributes[att_ind + 1].text
+                    elif playlist_attributes[att_ind + 1].tag == 'true':
+                        att_list[tag_index] = True
+                    elif playlist_attributes[att_ind + 1].tag == 'false':
+                        att_list[tag_index] = False
+                    elif playlist_attributes[att_ind + 1].tag == 'integer':
+                        if playlist_attributes[att_ind + 1].text is not None:
+                            att_list[tag_index] = int(playlist_attributes[att_ind + 1].text)
+                    elif playlist_attributes[att_ind + 1].tag == 'date':
+                        datetime_object = datetime.strptime(playlist_attributes[att_ind + 1].text, "%Y-%m-%dT%H:%M:%SZ")
+                        att_list[tag_index] = datetime_object
+                    else:
+                        print("What to do for playlist attribute '%s' of type '%s', value '%s'"%(playlist_attributes[att_ind].text, playlist_attributes[att_ind+1].tag,  str(playlist_attributes[att_ind+1].text)))
 
-                        self.complete_playlist.append([cur_playlist_name,
-                                                       track_tags[1].text])
+            new_playlist = PlayList(*att_list)
+            new_playlist.set_track_indexes(self, track_list)
+            if len(extra_attributes) > 0:
+                new_playlist.add_extra_attributes(extra_attributes)
+            self.playlists.append(new_playlist)
 
-        return playlist_name_list
+        if len(missing_attribute_tags) > 0:
+            print("missing attribute handling: ", missing_attribute_tags.keys())
+
+    def get_playlists(self):
+        """Returns playlists list"""
+        return self.playlists
 
     def get_track_list(self):
         """Returns playlists list"""
@@ -262,9 +367,21 @@ class Library(object):
                     except ValueError:
                         missing_attribute_tags[track_attributes[att_ind].text] = True
                         extra_attributes[track_attributes[att_ind].text] = track_attributes[att_ind + 1].text
-                        pass
-                    else:
+                        continue
+                    if track_attributes[att_ind+1].tag == 'string':
                         att_list[tag_index] = track_attributes[att_ind + 1].text
+                    elif track_attributes[att_ind + 1].tag == 'true':
+                        att_list[tag_index] = True
+                    elif track_attributes[att_ind + 1].tag == 'false':
+                        att_list[tag_index] = False
+                    elif track_attributes[att_ind + 1].tag == 'integer':
+                        if track_attributes[att_ind + 1].text is not None:
+                            att_list[tag_index] = int(track_attributes[att_ind + 1].text)
+                    elif track_attributes[att_ind + 1].tag == 'date':
+                        datetime_object = datetime.strptime(track_attributes[att_ind + 1].text, "%Y-%m-%dT%H:%M:%SZ")
+                        att_list[tag_index] = datetime_object
+                    else:
+                        print("What to do for track attribute '%s' of type '%s', value '%s'"%(track_attributes[att_ind].text, track_attributes[att_ind+1].tag,  str(track_attributes[att_ind+1].text)))
 
                 new_track = Track(*att_list)
                 if len(extra_attributes) > 0:
@@ -274,25 +391,6 @@ class Library(object):
 
         if len(missing_attribute_tags) > 0:
             print("missing attribute handling: ", missing_attribute_tags.keys())
-
-
-    def get_playlist_contents(self, playlist_name):
-        """Returns tracks (with attributes) of given playlist"""
-        playlist_with_attributes = []
-
-        for track in self.complete_playlist:
-            if track[0] == playlist_name:
-                temp_track_ID = track[1]
-
-                temp_track = self.track_id_map[temp_track_ID]
-                playlist_with_attributes.append(temp_track)
-                """
-                for elem in self.track_attr_list:                    
-                    if elem.track_id == temp_track_ID:
-                        playlist_with_attributes.append(elem)
-                        break
-                """
-        return playlist_with_attributes
 
 
 def get_size(input_size):
