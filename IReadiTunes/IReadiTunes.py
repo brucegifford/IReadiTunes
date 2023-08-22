@@ -47,9 +47,7 @@ class Library(object):
             datetime_object = datetime.strptime(attr.text, "%Y-%m-%dT%H:%M:%SZ")
             return datetime_object
         else:
-            print("What to do for playlist attribute '%s' of type '%s', value '%s'" % (attr_name,
-            playlist_attributes[att_ind].text, attr.tag,
-            str(attr.text)))
+            print("What to do for plist attribute '%s' of type '%s', value '%s'" % (attr_name, attr.tag, str(attr.text)))
             return attr.text
 
     def read_playlists(self):
