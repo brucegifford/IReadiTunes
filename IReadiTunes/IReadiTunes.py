@@ -30,6 +30,7 @@ class Library(object):
         self.lib = tree.getroot()
         self.read_tracks()
         self.read_playlists()
+        self.generate_playlist_dislay_paths()
 
     def get_plist_attr_value(self, attr_name, attr):
         if attr.tag == 'string':
@@ -229,6 +230,16 @@ class Library(object):
 
         if len(missing_attribute_tags) > 0:
             print("missing attribute handling: ", missing_attribute_tags.keys())
+
+    def generate_playlist_dislay_paths(self):
+        for playlist in self.playlists:
+            display_path  = "/"+playlist.name
+            parent_id = playlist.parent_persistent_id
+            while parent_id:
+                parent_playlist = self.playlist_by_persistent_id[parent_id]
+                display_path = '/' + parent_playlist.name + display_path
+                parent_id = parent_playlist.parent_persistent_id
+            playlist.display_path = display_path
 
     def get_playlists(self):
         """Returns playlists list"""
