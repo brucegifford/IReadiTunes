@@ -17,12 +17,18 @@ def lib_init():
 
 
 class Library(object):
+
     def __init__(self):
         """Constructor"""
         self.lib = 0
         self.playlists = []
-        self.track_attr_list = []
-        self.track_id_map = {}
+        self.playlist_by_persistent_id = {}
+        self.track_map = {}
+        self.song_list = []
+        self.movie_list = []
+        self.podcast_list = []
+        self.tvshow_list = []
+        self.audiobook_list = []
 
     def parse(self, path_to_XML_file):
         """Reads xml file and generate tracks list"""
@@ -142,7 +148,7 @@ class Library(object):
 
             def set_track_indexes(self, library, track_list):
                 for track_id in track_list:
-                    self.tracks.append( (track_id, library.track_id_map[track_id] ))
+                    self.tracks.append( (track_id, library.track_map[track_id] ))
 
             def add_extra_attribute(self, key, value):
                 self.extra_attributes[key] = value
@@ -174,6 +180,7 @@ class Library(object):
                 add_non_None_attribute('folder', self.folder)
                 add_non_None_attribute('parent_persistent_id', self.parent_persistent_id)
                 add_non_None_attribute('purchased_music', self.purchased_music)
+                add_non_None_attribute('display_path', self.display_path)
 
                 for key, value in self.extra_attributes:
                     playlist_dict[key] = value
@@ -228,6 +235,7 @@ class Library(object):
             if len(extra_attributes) > 0:
                 new_playlist.add_extra_attributes(extra_attributes)
             self.playlists.append(new_playlist)
+            self.playlist_by_persistent_id[new_playlist.playlist_persistent_id] = new_playlist
 
         if len(missing_attribute_tags) > 0:
             print("missing attribute handling: ", missing_attribute_tags.keys())
@@ -246,9 +254,26 @@ class Library(object):
         """Returns playlists list"""
         return self.playlists
 
-    def get_track_list(self):
+    def get_song_list(self):
         """Returns playlists list"""
-        return self.track_attr_list
+        return self.song_list
+
+    def get_movie_list(self):
+        """Returns playlists list"""
+        return self.movie_list
+
+    def get_podcast_list(self):
+        """Returns playlists list"""
+        return self.podcast_list
+
+    def get_tvshow_list(self):
+        """Returns playlists list"""
+        return self.tvshow_list
+
+    def get_audiobook_list(self):
+        """Returns playlists list"""
+        return self.audiobook_list
+
 
     def read_tracks(self):
         """Generate tracks list"""
@@ -455,8 +480,18 @@ class Library(object):
                 new_track = Track(*att_list)
                 if len(extra_attributes) > 0:
                     new_track.add_extra_attributes(extra_attributes)
-                self.track_attr_list.append(new_track)
-                self.track_id_map[new_track.track_id] = new_track
+
+                self.track_map[new_track.track_id] = new_track
+                if new_track.location and new_track.location.find('/Audiobooks/') >= 0:
+                    self.audiobook_list.append(new_track)
+                elif new_track.movie:
+                    self.movie_list.append(new_track)
+                elif new_track.podcast:
+                    self.podcast_list.append(new_track)
+                elif new_track.tv_show:
+                    self.tvshow_list.append(new_track)
+                else:
+                    self.song_list.append(new_track)
 
         if len(missing_attribute_tags) > 0:
             print("missing attribute handling: ", missing_attribute_tags.keys())
