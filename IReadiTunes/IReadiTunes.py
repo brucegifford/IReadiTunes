@@ -79,6 +79,65 @@ class Library(object):
                 self.parent_persistent_id = parent_persistent_id
                 self.purchased_music = purchased_music
 
+            # Docs are here??? https://developer.apple.com/documentation/ituneslibrary/itlibdistinguishedplaylistkind
+            ITLibDistinguishedPlaylistKindNone = 0
+            ITLibDistinguishedPlaylistKindMovies = 1
+            ITLibDistinguishedPlaylistKindTVShows = 2
+            ITLibDistinguishedPlaylistKindMusic = 3
+            ITLibDistinguishedPlaylistKindAudioBooks = 4
+            ITLibDistinguishedPlaylistKindRingtones = 5
+
+            ITLibDistinguishedPlaylistKindPodcasts = 7
+
+            ITLibDistinguishedPlaylistKindVoiceMemos = 14
+
+            ITLibDistinguishedPlaylistKindPurchases = 16
+
+            ITLibDistinguishedPlaylistKindiTunesU = 26
+
+            ITLibDistinguishedPlaylistKind90sMusic = 42
+            ITLibDistinguishedPlaylistKindMyTopRated = 43
+            ITLibDistinguishedPlaylistKindTop25MostPlayed = 44
+            ITLibDistinguishedPlaylistKindRecentlyPlayed = 45
+            ITLibDistinguishedPlaylistKindRecentlyAdded = 46
+            ITLibDistinguishedPlaylistKindMusicVideos = 47
+            ITLibDistinguishedPlaylistKindClassicalMusic = 48
+            ITLibDistinguishedPlaylistKindLibraryMusicVideos = 49
+
+            ITLibDistinguishedPlaylistKindHomeVideos = 50
+            ITLibDistinguishedPlaylistKindApplications = 51
+            ITLibDistinguishedPlaylistKindLovedSongs = 52
+            ITLibDistinguishedPlaylistKindMusicShowsAndMovies = 53
+
+            distinguishedKindMap = {
+                "None": ITLibDistinguishedPlaylistKindNone,
+                "Movies": ITLibDistinguishedPlaylistKindMovies,
+                "TVShows": ITLibDistinguishedPlaylistKindTVShows,
+                "Music": ITLibDistinguishedPlaylistKindMusic,
+                "AudioBooks": ITLibDistinguishedPlaylistKindAudioBooks,
+                "Ringtones": ITLibDistinguishedPlaylistKindRingtones,
+                "Podcasts": ITLibDistinguishedPlaylistKindPodcasts,
+                "VoiceMemos": ITLibDistinguishedPlaylistKindVoiceMemos,
+                "Purchases": ITLibDistinguishedPlaylistKindPurchases,
+                "iTunesU": ITLibDistinguishedPlaylistKindiTunesU,
+                "90sMusic": ITLibDistinguishedPlaylistKind90sMusic,
+                "MyTopRated": ITLibDistinguishedPlaylistKindMyTopRated,
+                "Top25MostPlayed": ITLibDistinguishedPlaylistKindTop25MostPlayed,
+                "RecentlyPlayed": ITLibDistinguishedPlaylistKindRecentlyPlayed,
+                "RecentlyAdded": ITLibDistinguishedPlaylistKindRecentlyAdded,
+                "MusicVideos": ITLibDistinguishedPlaylistKindMusicVideos,
+                "ClassicalMusic": ITLibDistinguishedPlaylistKindClassicalMusic,
+                "LibraryMusicVideos": ITLibDistinguishedPlaylistKindLibraryMusicVideos,
+                "HomeVideos": ITLibDistinguishedPlaylistKindHomeVideos,
+                "Applications": ITLibDistinguishedPlaylistKindApplications,
+                "LovedSongs": ITLibDistinguishedPlaylistKindLovedSongs,
+                "MusicShowsAndMovies": ITLibDistinguishedPlaylistKindMusicShowsAndMovies
+            }
+            # create an inverse map
+            distinguishedKindMapInverse ={}
+            for k,v in distinguishedKindMap.items():
+                distinguishedKindMapInverse[v] = k
+
             def set_track_indexes(self, library, track_list):
                 for track_id in track_list:
                     self.tracks.append( (track_id, library.track_id_map[track_id] ))
@@ -90,7 +149,7 @@ class Library(object):
                 for key, value in attributes.items():
                     self.extra_attributes[key] = value
 
-            def get_as_dict(self):
+            def get_as_dict(self, add_distingished_kind_label = False):
                 playlist_dict = {}
 
                 def add_non_None_attribute(key, value):
@@ -116,6 +175,11 @@ class Library(object):
 
                 for key, value in self.extra_attributes:
                     playlist_dict[key] = value
+
+                # if they want a text representation, look it up
+                if add_distingished_kind_label and 'distinguished_kind' in playlist_dict:
+                    if playlist_dict['distinguished_kind'] in distinguishedKindMapInverse:
+                        playlist_dict['distinguished_kind_label'] = distinguishedKindMapInverse[playlist_dict['distinguished_kind']]
 
                 return playlist_dict
 
