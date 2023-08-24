@@ -265,6 +265,16 @@ class Library(object):
 
         for playlist in self.playlists:
             playlist_name = make_legal_filename(playlist.name)
+            if playlist_name == 'Downloaded':
+                if playlist.distinguished_kind == 65:
+                    playlist_name += "_music"
+                elif playlist.distinguished_kind == 66:
+                    playlist_name += "_movies"
+                elif playlist.distinguished_kind == 67:
+                    playlist_name += "_tv_shows"
+                else:
+                    playlist_name += "_"+str(playlist.distinguished_kind)
+
             display_path  = "/"+playlist_name
             parent_id = playlist.parent_persistent_id
             while parent_id:
