@@ -184,13 +184,18 @@ class Library(object):
                 add_non_None_attribute('display_path', self.display_path)
 
                 #add the individual tracks
-                """"""
                 if self.tracks:
                     playlist_dict['tracks'] = []
                     for id, track in self.tracks:
                         track_dict = track.get_as_dict()
                         playlist_dict['tracks'].append(track_dict)
-                """"""
+                """ this code puts just the track file name
+                if self.tracks:
+                    playlist_dict['tracks'] = []
+                    for id, track in self.tracks:
+                        if track.location:
+                            playlist_dict['tracks'].append(track.location)
+                """
 
 
                 for key, value in self.extra_attributes:
