@@ -182,6 +182,16 @@ class Library(object):
                 add_non_None_attribute('purchased_music', self.purchased_music)
                 add_non_None_attribute('display_path', self.display_path)
 
+                #add the individual tracks
+                """"""
+                if self.tracks:
+                    playlist_dict['tracks'] = []
+                    for id, track in self.tracks:
+                        track_dict = track.get_as_dict()
+                        playlist_dict['tracks'].append(track_dict)
+                """"""
+
+
                 for key, value in self.extra_attributes:
                     playlist_dict[key] = value
 
