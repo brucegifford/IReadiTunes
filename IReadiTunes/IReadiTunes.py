@@ -257,12 +257,19 @@ class Library(object):
             print("missing attribute handling: ", missing_attribute_tags.keys())
 
     def generate_playlist_dislay_paths(self):
+        def make_legal_filename(filename):
+            for char in "/\\:*?\"'<>|[]":
+                filename = filename.replace(char, '_')
+            filename = filename.strip(', _.')
+            return filename
+
         for playlist in self.playlists:
-            display_path  = "/"+playlist.name
+            playlist_name = make_legal_filename(playlist.name)
+            display_path  = "/"+playlist_name
             parent_id = playlist.parent_persistent_id
             while parent_id:
                 parent_playlist = self.playlist_by_persistent_id[parent_id]
-                display_path = '/' + parent_playlist.name + display_path
+                display_path = '/' + make_legal_filename(parent_playlist.name) + display_path
                 parent_id = parent_playlist.parent_persistent_id
             playlist.display_path = display_path
 
