@@ -7,6 +7,7 @@ MIT License
 
 import xml.etree.ElementTree as ET
 from urllib.parse import unquote, urlparse
+import urllib.request
 from datetime import datetime
 
 
@@ -379,6 +380,8 @@ class Library(object):
                 self.clean = clean
                 self.explicit = explicit
                 self.sort_composer = sort_composer
+                if self.location:
+                    self.location = urllib.request.unquote(self.location)
 
             def add_extra_attribute(self, key, value):
                 self.extra_attributes[key] = value
