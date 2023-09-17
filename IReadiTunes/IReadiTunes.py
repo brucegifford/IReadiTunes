@@ -525,6 +525,8 @@ class Library(object):
                     self.podcast_list.append(new_track)
                 elif new_track.tv_show:
                     self.tvshow_list.append(new_track)
+                elif new_track.genre and new_track.location and new_track.genre == "Podcast" and new_track.location.lower().find('file://localhost/')<0:
+                    self.podcast_list.append(new_track)
                 else:
                     self.song_list.append(new_track)
 
