@@ -198,7 +198,7 @@ class Library(object):
                 """
 
 
-                for key, value in self.extra_attributes:
+                for key, value in self.extra_attributes.items():
                     playlist_dict[key] = value
 
                 # if they want a text representation, look it up
@@ -324,7 +324,7 @@ class Library(object):
                               'Episode Order', 'TV Show', 'Protected', 'Video Width',
                               'Video Height', 'Season', 'BPM', 'Podcast', 'Unplayed',
                               'Comments', 'Part Of Gapless Album', 'Work', 'Clean',
-                              'Explicit', 'Sort Composer']
+                              'Explicit', 'Sort Composer', 'Music Video', 'Grouping']
 
         class Track:
             def __init__(self, track_id, size, total_time, date_modified,
@@ -338,7 +338,8 @@ class Library(object):
                          track_number, track_count, normalization, sort_album, loved,
                          compilation, sort_album_artist, series, episode_order, tv_show,
                          protected, video_width, video_height, season, bpm, podcast, unplayed,
-                         comments, part_of_gapless_album, work, clean, explicit, sort_composer):
+                         comments, part_of_gapless_album, work, clean, explicit, sort_composer,
+                         music_video, grouping):
                 self.extra_attributes = {}
                 self.track_id = track_id
                 self.size = size
@@ -402,6 +403,8 @@ class Library(object):
                 self.clean = clean
                 self.explicit = explicit
                 self.sort_composer = sort_composer
+                self.music_video = music_video
+                self.grouping = grouping
                 if self.location:
                     self.location = urllib.request.unquote(self.location)
 
@@ -481,9 +484,12 @@ class Library(object):
                 add_non_None_attribute('clean', self.clean)
                 add_non_None_attribute('explicit', self.explicit)
                 add_non_None_attribute('sort_composer', self.sort_composer)
+                add_non_None_attribute('music_video', self.music_video)
+                add_non_None_attribute('grouping', self.grouping)
 
-                for key, value in self.extra_attributes:
-                    track_dict[key] = value
+                if len(self.extra_attributes):
+                    for key, value in self.extra_attributes.items():
+                        track_dict[key] = value
 
                 return track_dict
 
