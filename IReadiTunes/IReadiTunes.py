@@ -54,6 +54,8 @@ class Library(object):
         elif attr.tag == 'date':
             datetime_object = datetime.strptime(attr.text, "%Y-%m-%dT%H:%M:%SZ")
             return datetime_object
+        elif attr.tag == 'data' and attr.text is not None and type(attr.text) is str:
+            return attr.text
         else:
             print("What to do for plist attribute '%s' of type '%s', value '%s'" % (attr_name, attr.tag, str(attr.text)))
             return attr.text
