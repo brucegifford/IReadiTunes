@@ -64,7 +64,8 @@ class Library(object):
         """Generate tracks list"""
         attribut_name_list = [ "Name", "Description", "Master", "Playlist ID", "Playlist Persistent ID", "Visible",
                                "All Items", "Distinguished Kind", "Music", 'Movies', 'TV Shows', 'Podcasts',
-                               'Audiobooks', 'Folder', 'Parent Persistent ID', 'Purchased Music' ]
+                               'Audiobooks', 'Folder', 'Parent Persistent ID', 'Purchased Music', 'Smart Criteria',
+                               'Smart Info']
 
         # Docs are here??? https://developer.apple.com/documentation/ituneslibrary/itlibdistinguishedplaylistkind
         ITLibDistinguishedPlaylistKindNone = 0
@@ -129,7 +130,7 @@ class Library(object):
         class PlayList:
             def __init__(self, name, description, master, playlist_id, playlist_persistent_id, visible, all_items,
                          distinguished_kind, music, movies, tv_shows, podcasts, audiobooks, folder,
-                         parent_persistent_id, purchased_music):
+                         parent_persistent_id, purchased_music, smart_criteria, smart_info):
                 self.extra_attributes = {}
                 self.tracks = []
                 self.name = name
@@ -148,6 +149,8 @@ class Library(object):
                 self.folder = folder
                 self.parent_persistent_id = parent_persistent_id
                 self.purchased_music = purchased_music
+                self.smart_criteria = smart_criteria
+                self.smart_info = smart_info
 
             def set_track_indexes(self, library, track_list):
                 for track_id in track_list:
@@ -183,6 +186,8 @@ class Library(object):
                 add_non_None_attribute('folder', self.folder)
                 add_non_None_attribute('parent_persistent_id', self.parent_persistent_id)
                 add_non_None_attribute('purchased_music', self.purchased_music)
+                add_non_None_attribute('smart_criteria', self.smart_criteria)
+                add_non_None_attribute('smart_info', self.smart_info)
                 add_non_None_attribute('display_path', self.display_path)
 
                 #add the individual tracks
